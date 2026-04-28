@@ -1,0 +1,204 @@
+@page {
+  size: A4;
+  margin: 22mm 18mm 22mm 18mm;
+  @bottom-center {
+    content: counter(page) " / " counter(pages);
+    font-family: -apple-system, "Helvetica Neue", sans-serif;
+    font-size: 9pt;
+    color: #6b7c8c;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, "Helvetica Neue", "Hiragino Sans",
+    "ヒラギノ角ゴ ProN", "Yu Gothic UI", "Meiryo", sans-serif;
+  font-size: 10.5pt;
+  line-height: 1.75;
+  color: #1f2d3d;
+  margin: 0;
+  padding: 0;
+}
+
+/* ----- Title block (light teal banner) ----- */
+h1 {
+  background: #e3f1f5;
+  color: #102a43;
+  font-size: 22pt;
+  font-weight: 800;
+  text-align: center;
+  padding: 22px 24px 6px 24px;
+  margin: 0 0 0 0;
+  border-radius: 10px 10px 0 0;
+  letter-spacing: 0.5px;
+}
+
+/* The two paragraphs immediately after H1 form the subtitle/meta block */
+h1 + p {
+  background: #e3f1f5;
+  color: #2b6a8c;
+  text-align: center;
+  font-size: 11pt;
+  margin: 0;
+  padding: 0 24px 4px 24px;
+}
+
+h1 + p + p {
+  background: #e3f1f5;
+  color: #3a4a5b;
+  text-align: center;
+  font-size: 10pt;
+  margin: 0;
+  padding: 0 24px 2px 24px;
+}
+
+h1 + p + p + p {
+  background: #e3f1f5;
+  color: #3a4a5b;
+  text-align: center;
+  font-size: 10pt;
+  margin: 0 0 28px 0;
+  padding: 0 24px 22px 24px;
+  border-radius: 0 0 10px 10px;
+}
+
+/* ----- Section headings ----- */
+h2 {
+  color: #102a43;
+  font-size: 16pt;
+  font-weight: 800;
+  margin: 32px 0 6px 0;
+  padding-bottom: 6px;
+  border-bottom: 2.5px solid #2c89b6;
+}
+
+h3 {
+  color: #102a43;
+  font-size: 12.5pt;
+  font-weight: 700;
+  margin: 22px 0 8px 0;
+  padding-left: 10px;
+  border-left: 4px solid #2c89b6;
+  line-height: 1.3;
+}
+
+/* ----- Paragraphs ----- */
+p {
+  margin: 10px 0;
+}
+
+/* ----- Inline code ----- */
+code {
+  background: #eef2f6;
+  color: #1f2d3d;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-family: "SF Mono", "Menlo", "Consolas", monospace;
+  font-size: 9.4pt;
+}
+
+/* ----- Code blocks ----- */
+pre {
+  background: #0e2538;
+  color: #d6e3ee;
+  padding: 14px 18px;
+  border-radius: 8px;
+  overflow-x: auto;
+  font-size: 9.2pt;
+  line-height: 1.55;
+  margin: 12px 0;
+}
+
+pre code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+  font-size: inherit;
+  font-family: "SF Mono", "Menlo", "Consolas", monospace;
+}
+
+/* highlight.js token colors tuned to match the sample's dark code blocks */
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-built_in {
+  color: #4fb3d9;
+}
+.hljs-string,
+.hljs-attr {
+  color: #f08a5d;
+}
+.hljs-title,
+.hljs-class,
+.hljs-function .hljs-title,
+.hljs-type {
+  color: #7ed6a5;
+}
+.hljs-number,
+.hljs-literal {
+  color: #c8a4ff;
+}
+.hljs-comment {
+  color: #6c8290;
+  font-style: italic;
+}
+.hljs-params {
+  color: #d6e3ee;
+}
+
+/* ----- Lists ----- */
+ul, ol {
+  padding-left: 22px;
+  margin: 8px 0;
+}
+
+li {
+  margin: 4px 0;
+}
+
+ul li::marker {
+  color: #2c89b6;
+}
+
+/* ----- Tables ----- */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 14px 0;
+  font-size: 10pt;
+}
+
+th {
+  background: #e3f1f5;
+  color: #102a43;
+  text-align: left;
+  padding: 8px 12px;
+  border-bottom: 2px solid #2c89b6;
+  font-weight: 700;
+}
+
+td {
+  padding: 8px 12px;
+  border-bottom: 1px solid #d8e0e8;
+}
+
+td code, th code {
+  font-size: 9.4pt;
+}
+
+/* ----- Horizontal rule ----- */
+hr {
+  border: none;
+  border-top: 1px dashed #c4cdd7;
+  margin: 28px 0;
+}
+
+/* Avoid awkward page breaks */
+h2, h3 {
+  page-break-after: avoid;
+}
+pre, table {
+  page-break-inside: avoid;
+}

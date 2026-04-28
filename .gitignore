@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.python-version
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Node
+node_modules/
+.svelte-kit/
+build/
+dist/
+.vite/
+
+# Env
+.env
+.env.local
+.env.*.local
+
+# OS / Editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# DB volume (docker)
+backend/docker/db-data/

@@ -1,0 +1,6 @@
+# 校正プロンプト（phase 3 で使用）
+# system / user / output schema を定義する想定
+system: |
+  TBD
+user: |
+  TBD

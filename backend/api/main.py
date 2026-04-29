@@ -3,6 +3,8 @@ from contextlib import asynccontextmanager
 
 from fastapi import Depends, FastAPI, HTTPException, Response, status
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.ai import Corrector, get_corrector
@@ -11,12 +13,21 @@ from api.auth import (
     authenticate,
     create_token,
     current_user,
+    hash_password,
+    require_admin,
 )
 from api.config import settings
 from api.db import SessionLocal, engine, get_session
 from api.initial_admin import ensure_initial_admin
 from api.models import Base, User
-from api.schemas import CorrectIn, CorrectOut, LoginIn, UserOut
+from api.schemas import (
+    AdminUserCreateIn,
+    AdminUserOut,
+    CorrectIn,
+    CorrectOut,
+    LoginIn,
+    UserOut,
+)
 
 # === 起動時セットアップ ===
 
@@ -101,3 +112,57 @@ async def correct(
 ) -> CorrectOut:
     """校正リクエスト時：認証済みユーザーのテキストを Gemini で校正して返す。永続化しない。"""
     return await corrector(body.original)
+
+
+# === 管理者エンドポイント ===
+
+
+@app.get("/api/admin/users", response_model=list[AdminUserOut])
+async def admin_list_users(
+    admin: User = Depends(require_admin),
+    session: AsyncSession = Depends(get_session),
+) -> list[User]:
+    """admin による一覧取得：deleted_at が null のユーザーを返す。"""
+    stmt = select(User).where(User.deleted_at.is_(None)).order_by(User.id)
+    return list((await session.execute(stmt)).scalars().all())
+
+
+@app.post("/api/admin/user", response_model=AdminUserOut)
+async def admin_create_user(
+    body: AdminUserCreateIn,
+    admin: User = Depends(require_admin),
+    session: AsyncSession = Depends(get_session),
+) -> User:
+    """admin によるユーザー登録：username が重複してたら 409。"""
+    user = User(
+        username=body.username,
+        password_hash=hash_password(body.password),
+        role="user",
+        is_active=True,
+    )
+    session.add(user)
+    try:
+        await session.commit()
+    except IntegrityError as e:
+        await session.rollback()
+        raise HTTPException(status.HTTP_409_CONFLICT, "username already exists") from e
+    await session.refresh(user)
+    return user
+
+
+@app.patch("/api/admin/user/{user_id}/deactivate", response_model=AdminUserOut)
+async def admin_deactivate_user(
+    user_id: int,
+    admin: User = Depends(require_admin),
+    session: AsyncSession = Depends(get_session),
+) -> User:
+    """admin によるユーザー無効化：is_active=False にしてソフトデリート。自分自身は無効化できない。"""
+    if user_id == admin.id:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, "cannot deactivate yourself")
+    user = await session.get(User, user_id)
+    if user is None or user.deleted_at is not None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "user not found")
+    user.is_active = False
+    await session.commit()
+    await session.refresh(user)
+    return user

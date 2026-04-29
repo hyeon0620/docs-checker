@@ -53,7 +53,35 @@ git push --no-verify
 ### PR レビュー（GitHub Actions）
 
 `develop` / `main` 宛に PR を出すと、Claude による自動レビューが走る（`.github/workflows/pr-review.yml`）。
-
-**初回セットアップ**：GitHub リポジトリの Settings → Secrets and variables → Actions に `CLAUDE_CODE_OAUTH_TOKEN` を追加する必要がある。
-
 PR コメントで `@claude` をメンションすると追加レビュー / 質問対応もしてくれる。
+
+#### 初回セットアップ（リポジトリごとに1回）
+
+**1. Claude Code GitHub App をインストール**
+
+<https://github.com/apps/claude> から `hyeon0620/docs-checker` にインストール。
+これが無いと workflow 実行時に `Claude Code is not installed on this repository` エラーで落ちる。
+
+**2. OAuth トークンを生成**
+
+ローカルの Claude Code CLI で：
+
+```bash
+claude setup-token
+```
+
+`sk-ant-oat01-...` のような長寿命トークンが表示される。
+**Claude Code Plan / Pro / Max を契約していれば API キー不要**で、Plan の枠から消費される。
+
+**3. GitHub Secret に登録**
+
+リポジトリの Settings → Secrets and variables → Actions → **New repository secret**
+
+- Name: `CLAUDE_CODE_OAUTH_TOKEN`
+- Value: 上で取得したトークン
+
+#### トラブル時の確認
+
+- `Claude Code is not installed` → 上記 1 の App インストール忘れ
+- 認証エラー → 上記 2 のトークンを再発行して 3 を更新
+- 動かない → Actions タブから **Re-run failed jobs** で再実行

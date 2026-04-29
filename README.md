@@ -18,7 +18,7 @@ cd backend && docker compose -f docker/compose.yml up -d
 # backend
 uv sync
 uv run pytest               # スモークテスト
-uv run uvicorn api.app:app --reload
+uv run uvicorn api.main:app --reload
 
 # frontend（別ターミナル）
 cd frontend

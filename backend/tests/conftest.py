@@ -16,18 +16,26 @@ import pytest  # noqa: E402
 import pytest_asyncio  # noqa: E402
 from httpx import ASGITransport, AsyncClient  # noqa: E402
 
-from api.app import app  # noqa: E402
+from api.main import app  # noqa: E402
 from api.models import Base  # noqa: E402
-from api.session import SessionLocal, engine  # noqa: E402
+from api.db import SessionLocal, engine  # noqa: E402
+
+
+# === バックエンド指定 ===
 
 
 @pytest.fixture(scope="session")
 def anyio_backend() -> str:
+    """anyio 互換テストで使う非同期バックエンドの指定（asyncio に固定）。"""
     return "asyncio"
+
+
+# === テストごとの fixtures ===
 
 
 @pytest_asyncio.fixture
 async def client() -> AsyncGenerator[AsyncClient, None]:
+    """テスト時：ASGI 経由で叩く HTTP クライアント。前後でテーブルを drop_all + create_all して状態をリセット。"""
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
@@ -42,5 +50,6 @@ async def client() -> AsyncGenerator[AsyncClient, None]:
 
 @pytest_asyncio.fixture
 async def session() -> AsyncGenerator:
+    """テスト時：HTTP を経由せず直接 DB に書き込み/読み取りしたい時に使う AsyncSession。"""
     async with SessionLocal() as s:
         yield s

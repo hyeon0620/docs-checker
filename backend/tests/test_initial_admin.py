@@ -3,7 +3,7 @@ from sqlalchemy import select
 
 from api.initial_admin import ensure_initial_admin
 from api.models import User
-from api.settings import settings
+from api.config import settings
 
 
 @pytest.mark.asyncio

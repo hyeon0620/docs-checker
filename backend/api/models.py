@@ -6,13 +6,15 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
 class Base(DeclarativeBase):
-    pass
+    """SQLAlchemy 全テーブル共通の宣言ベース。`Base.metadata.create_all` でまとめてテーブル作成する。"""
 
 
 Role = Literal["user", "admin"]
 
 
 class User(Base):
+    """認証対象のユーザー。is_active と deleted_at で論理削除を管理する。"""
+
     __tablename__ = "user"
 
     id: Mapped[int] = mapped_column(primary_key=True)

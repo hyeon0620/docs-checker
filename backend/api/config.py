@@ -2,6 +2,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
+    """アプリ全体の設定。優先度は os.environ > .env > デフォルト値。"""
+
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     database_url: str = "postgresql+asyncpg://app:app@localhost:5432/docs_checker"

@@ -3,11 +3,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.auth import hash_password
 from api.models import User
-from api.settings import settings
+from api.config import settings
 
 
 async def ensure_initial_admin(session: AsyncSession) -> None:
-    """起動時に1回だけ初期 admin を作成する（無ければ作る、有れば何もしない）。"""
+    """サーバー起動時（lifespan 内）：初期 admin を作成する（無ければ作る、有れば何もしない / 冪等）。"""
     if not settings.initial_admin_password:
         return
 

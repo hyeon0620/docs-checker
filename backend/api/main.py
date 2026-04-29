@@ -2,7 +2,6 @@ from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
 from fastapi import Depends, FastAPI, HTTPException, Response, status
-from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.auth import (
@@ -11,13 +10,18 @@ from api.auth import (
     create_token,
     current_user,
 )
+from api.db import SessionLocal, engine, get_session
 from api.initial_admin import ensure_initial_admin
 from api.models import Base, User
-from api.session import SessionLocal, engine, get_session
+from api.schemas import LoginIn, UserOut
+
+
+# === 起動時セットアップ ===
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+    """サーバー起動時：DB テーブル作成 + 初期 admin の自動作成。終了時：エンジンを片付け。"""
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     async with SessionLocal() as session:
@@ -29,20 +33,16 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 app = FastAPI(title="Docs Checker API", lifespan=lifespan)
 
 
-class LoginIn(BaseModel):
-    username: str
-    password: str
-
-
-class UserOut(BaseModel):
-    id: int
-    username: str
-    role: str
+# === ヘルスチェック ===
 
 
 @app.get("/health")
 def health() -> dict[str, str]:
+    """疎通確認用：ロードバランサ・監視からのヘルスチェックに応える。認証不要。"""
     return {"status": "ok"}
+
+
+# === 認証エンドポイント ===
 
 
 @app.post("/api/login", response_model=UserOut)
@@ -51,6 +51,7 @@ async def login(
     response: Response,
     session: AsyncSession = Depends(get_session),
 ) -> User:
+    """ログイン時：認証 → JWT 発行 → Cookie にセット。失敗時は 401。"""
     user = await authenticate(session, body.username, body.password)
     if user is None:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "invalid credentials")
@@ -66,10 +67,12 @@ async def login(
 
 @app.post("/api/logout")
 async def logout(response: Response) -> dict[str, str]:
+    """ログアウト時：Cookie を削除。発行済み JWT は exp(24h) まで有効（許容）。"""
     response.delete_cookie(COOKIE_NAME)
     return {"status": "ok"}
 
 
 @app.get("/api/me", response_model=UserOut)
 async def me(user: User = Depends(current_user)) -> User:
+    """認証必須の疎通確認用：current_user を通って現在のログインユーザー情報を返す。"""
     return user

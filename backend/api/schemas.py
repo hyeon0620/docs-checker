@@ -44,3 +44,22 @@ class CorrectOut(BaseModel):
     corrected: str
     score: int  # 0-100
     issues: list[IssueItem]
+
+
+# === 管理者 ===
+
+
+class AdminUserCreateIn(BaseModel):
+    """POST /api/admin/user のリクエストボディ。"""
+
+    username: str
+    password: str
+
+
+class AdminUserOut(BaseModel):
+    """管理画面で扱うユーザー情報のレスポンス。"""
+
+    id: int
+    username: str
+    role: str
+    is_active: bool

@@ -2,6 +2,7 @@ from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
 from fastapi import Depends, FastAPI, HTTPException, Response, status
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.ai import Corrector, get_corrector
@@ -11,6 +12,7 @@ from api.auth import (
     create_token,
     current_user,
 )
+from api.config import settings
 from api.db import SessionLocal, engine, get_session
 from api.initial_admin import ensure_initial_admin
 from api.models import Base, User
@@ -31,6 +33,16 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
 
 app = FastAPI(title="Docs Checker API", lifespan=lifespan)
+
+# CORS：フロント（別ポート）から Cookie 付きで叩けるようにする。
+# allow_credentials=True を有効にする時、allow_origins に "*" は使えない。
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.cors_origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 # === ヘルスチェック ===

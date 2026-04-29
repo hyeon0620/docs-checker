@@ -408,18 +408,21 @@ INITIAL_ADMIN_PASSWORD=...
 以下の構成を参考に下に構成図を作成してください。
 
 ```
-99_first_test/
+docs-checker/
 ├── backend/
 │ ├── api/
-│ │ ├── app.py # エンドポイント
-│ │ ├── auth.py # 認証（JWT + Cookie）
-│ │ ├── models.py # DBテーブル定義
-│ │ ├── session.py # DB接続
-│ │ └── ai.py # Gemini呼び出し（LangChain）
+│ │ ├── main.py           # FastAPI 本体・エンドポイント定義
+│ │ ├── auth.py           # 認証（bcrypt / JWT / Depends）
+│ │ ├── config.py         # pydantic-settings で env 読み込み
+│ │ ├── db.py             # async engine + SessionLocal + get_session
+│ │ ├── models.py         # DB テーブル定義（User）
+│ │ ├── initial_admin.py  # 起動時の冪等な admin 作成
+│ │ └── ai.py             # Gemini 呼び出し（phase 3 で追加）
 │ ├── prompts/
-│ │ └── correct.yaml # 校正プロンプト
+│ │ └── correct.yaml      # 校正プロンプト
 │ ├── docker/
-│ │ └── compose.yml # PostgreSQL
+│ │ └── compose.yml       # PostgreSQL
+│ ├── tests/              # pytest（auth/initial_admin/smoke）
 │ ├── .env
 │ ├── .env.example
 │ └── pyproject.toml
@@ -470,10 +473,12 @@ Step 1: プロジェクト初期化（5分）
 
 Step 2: DB + 認証（10分）
 
+- config.py（pydantic-settings）
 - models.py（User）
-- session.py
+- db.py（async engine + session）
 - auth.py + login/logout API
-- 動作確認（curlでログインできるか）
+- initial_admin.py（起動時 admin 自動作成）
+- 動作確認（curl でログインできるか）
 
 Step 3: 校正API（10分）
 

@@ -18,7 +18,7 @@ cd backend && docker compose -f docker/compose.yml up -d
 # backend
 uv sync
 uv run pytest               # スモークテスト
-uv run uvicorn api.app:app --reload
+uv run uvicorn api.main:app --reload
 
 # frontend（別ターミナル）
 cd frontend
@@ -29,7 +29,7 @@ bun run dev
 ## 進捗
 
 - [x] phase 1: プロジェクト初期化（`docs/phase-1.md`）
-- [ ] phase 2: DB + 認証
+- [x] phase 2: DB + 認証（`docs/phase-2.md`）
 - [ ] phase 3: 校正 API
 - [ ] phase 4: フロント
 - [ ] phase 5: 管理者機能

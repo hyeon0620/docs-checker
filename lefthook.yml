@@ -1,0 +1,33 @@
+# lefthook.yml — Git フックの設定
+# Install: brew install lefthook && lefthook install
+# Bypass: LEFTHOOK=0 git commit / git commit --no-verify
+
+pre-commit:
+  parallel: true
+  commands:
+    ruff-check:
+      root: backend/
+      glob: "**/*.py"
+      run: uv run ruff check {staged_files}
+    ruff-format:
+      root: backend/
+      glob: "**/*.py"
+      run: uv run ruff format --check {staged_files}
+    trailing-whitespace:
+      run: git diff --cached --check
+    merge-conflicts:
+      glob: "**/*"
+      run: grep -rn '<<<<<<<' {staged_files} && exit 1 || exit 0
+
+pre-push:
+  parallel: true
+  commands:
+    ruff-check-all:
+      root: backend/
+      run: uv run ruff check .
+    ruff-format-all:
+      root: backend/
+      run: uv run ruff format --check .
+    test-backend:
+      root: backend/
+      run: uv run pytest -q --tb=short

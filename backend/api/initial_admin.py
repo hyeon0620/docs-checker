@@ -2,8 +2,8 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.auth import hash_password
-from api.models import User
 from api.config import settings
+from api.models import User
 
 
 async def ensure_initial_admin(session: AsyncSession) -> None:

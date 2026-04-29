@@ -13,7 +13,6 @@ from api.main import app
 from api.models import User
 from api.schemas import CorrectOut, IssueItem
 
-
 # === フェイクの校正関数とフィクスチャ ===
 
 
@@ -51,9 +50,7 @@ async def _login_as_taro(client, session) -> None:
     )
     session.add(user)
     await session.commit()
-    res = await client.post(
-        "/api/login", json={"username": "taro", "password": "taro1234"}
-    )
+    res = await client.post("/api/login", json={"username": "taro", "password": "taro1234"})
     assert res.status_code == 200
 
 

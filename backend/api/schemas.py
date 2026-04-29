@@ -2,7 +2,6 @@
 
 from pydantic import BaseModel
 
-
 # === 認証 ===
 
 
@@ -27,10 +26,10 @@ class UserOut(BaseModel):
 class IssueItem(BaseModel):
     """校正での指摘1件。Gemini が構造化出力で返す。"""
 
-    category: str       # "typo" | "keigo" | "expression"
-    span: str           # 原文の該当部分
-    suggestion: str     # 修正案
-    reason: str         # 修正理由
+    category: str  # "typo" | "keigo" | "expression"
+    span: str  # 原文の該当部分
+    suggestion: str  # 修正案
+    reason: str  # 修正理由
 
 
 class CorrectIn(BaseModel):
@@ -43,5 +42,5 @@ class CorrectOut(BaseModel):
     """校正結果。corrected は LLM が返す修正後テキスト。永続化はしない。"""
 
     corrected: str
-    score: int          # 0-100
+    score: int  # 0-100
     issues: list[IssueItem]

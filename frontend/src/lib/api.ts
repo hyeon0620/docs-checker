@@ -73,3 +73,34 @@ export async function correct(original: string): Promise<CorrectResult> {
 	if (!res.ok) throw new Error("correction failed");
 	return res.json();
 }
+
+// === 管理者 ===
+
+export type AdminUser = {
+	id: number;
+	username: string;
+	role: "user" | "admin";
+	is_active: boolean;
+};
+
+export async function listUsers(): Promise<AdminUser[]> {
+	const res = await api("/api/admin/users");
+	if (!res.ok) throw new Error("not allowed");
+	return res.json();
+}
+
+export async function createUser(username: string, password: string): Promise<AdminUser> {
+	const res = await api("/api/admin/user", {
+		method: "POST",
+		body: JSON.stringify({ username, password }),
+	});
+	if (res.status === 409) throw new Error("そのユーザー名は既に使われています");
+	if (!res.ok) throw new Error("ユーザー作成に失敗しました");
+	return res.json();
+}
+
+export async function deactivateUser(id: number): Promise<AdminUser> {
+	const res = await api(`/api/admin/user/${id}/deactivate`, { method: "PATCH" });
+	if (!res.ok) throw new Error("無効化に失敗しました");
+	return res.json();
+}

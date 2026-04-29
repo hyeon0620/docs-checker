@@ -33,6 +33,10 @@
 	{#if authStore.isAuthenticated}
 		<header class="flex items-center justify-end gap-3 border-b px-6 py-3">
 			<span class="text-muted-foreground text-sm">{authStore.user?.username}</span>
+			<Button variant="ghost" size="sm" onclick={() => goto("/")}>校正</Button>
+			{#if authStore.user?.role === "admin"}
+				<Button variant="ghost" size="sm" onclick={() => goto("/admin")}>管理</Button>
+			{/if}
 			<Button variant="ghost" size="sm" onclick={() => authStore.logout()}>ログアウト</Button>
 		</header>
 	{/if}

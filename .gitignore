@@ -28,3 +28,7 @@ dist/
 
 # DB volume (docker)
 backend/docker/db-data/
+
+# 生成 PDF（pandoc + weasyprint で .md から都度作る、リポには入れない）
+docs/*.pdf
+!docs/sample/sample.pdf

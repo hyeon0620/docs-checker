@@ -15,7 +15,6 @@ from api.initial_admin import ensure_initial_admin
 from api.models import Base, User
 from api.schemas import LoginIn, UserOut
 
-
 # === 起動時セットアップ ===
 
 

@@ -10,7 +10,6 @@ from sqlalchemy.pool import StaticPool
 
 from api.config import settings
 
-
 # === エンジンとセッション生成器（モジュール起動時に1回だけ作る） ===
 
 _engine_kwargs: dict[str, Any] = {"echo": False}
@@ -26,7 +25,7 @@ SessionLocal = async_sessionmaker(engine, expire_on_commit=False)
 # === 依存関数 ===
 
 
-async def get_session() -> AsyncGenerator[AsyncSession, None]:
+async def get_session() -> AsyncGenerator[AsyncSession]:
     """リクエスト処理時：エンドポイントが Depends(get_session) で受け取る AsyncSession。"""
     async with SessionLocal() as session:
         yield session

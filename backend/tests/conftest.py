@@ -16,10 +16,9 @@ import pytest  # noqa: E402
 import pytest_asyncio  # noqa: E402
 from httpx import ASGITransport, AsyncClient  # noqa: E402
 
+from api.db import SessionLocal, engine  # noqa: E402
 from api.main import app  # noqa: E402
 from api.models import Base  # noqa: E402
-from api.db import SessionLocal, engine  # noqa: E402
-
 
 # === バックエンド指定 ===
 
@@ -34,7 +33,7 @@ def anyio_backend() -> str:
 
 
 @pytest_asyncio.fixture
-async def client() -> AsyncGenerator[AsyncClient, None]:
+async def client() -> AsyncGenerator[AsyncClient]:
     """テスト時：ASGI 経由で叩く HTTP クライアント。前後でテーブルを drop_all + create_all して状態をリセット。"""
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)

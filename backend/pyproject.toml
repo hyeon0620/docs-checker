@@ -18,4 +18,17 @@ dev = [
     "aiosqlite>=0.22.1",
     "pytest>=9.0.3",
     "pytest-asyncio>=1.3.0",
+    "ruff>=0.15.12",
 ]
+
+[tool.ruff]
+line-length = 120
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+# B008: FastAPI の Depends() / Cookie() を引数デフォルトで使う標準パターンを許可
+ignore = ["B008"]
+
+[tool.ruff.format]
+quote-style = "double"

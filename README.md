@@ -33,3 +33,27 @@ bun run dev
 - [ ] phase 3: 校正 API
 - [ ] phase 4: フロント
 - [ ] phase 5: 管理者機能
+
+## 開発フロー
+
+### Git フック（lefthook）
+
+`pre-commit` で lint / format 確認、`pre-push` で全テストを走らせる。
+
+```bash
+# インストール（初回のみ）
+brew install lefthook
+lefthook install
+
+# 一時的にバイパス
+LEFTHOOK=0 git commit -m "..."
+git push --no-verify
+```
+
+### PR レビュー（GitHub Actions）
+
+`develop` / `main` 宛に PR を出すと、Claude による自動レビューが走る（`.github/workflows/pr-review.yml`）。
+
+**初回セットアップ**：GitHub リポジトリの Settings → Secrets and variables → Actions に `CLAUDE_CODE_OAUTH_TOKEN` を追加する必要がある。
+
+PR コメントで `@claude` をメンションすると追加レビュー / 質問対応もしてくれる。

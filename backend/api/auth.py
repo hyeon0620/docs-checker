@@ -6,9 +6,9 @@ from fastapi import Cookie, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.models import User
-from api.db import get_session
 from api.config import settings
+from api.db import get_session
+from api.models import User
 
 ALGORITHM = "HS256"
 COOKIE_NAME = "token"
@@ -25,9 +25,7 @@ def hash_password(password: str) -> str:
 # === ログイン処理 ===
 
 
-async def authenticate(
-    session: AsyncSession, username: str, password: str
-) -> User | None:
+async def authenticate(session: AsyncSession, username: str, password: str) -> User | None:
     """ログイン処理：DB から有効ユーザーを引いてパスワード照合。失敗は None。"""
     stmt = select(User).where(
         User.username == username,
@@ -79,7 +77,10 @@ async def current_user(
 
 
 def decode_token(token: str) -> dict:
-    """認証必須リクエスト時（current_user 内）：JWT 文字列を検証して中身（payload）を取り出す。署名 NG / 期限切れは例外。"""
+    """認証必須リクエスト時（current_user 内）：JWT 文字列を検証して中身（payload）を取り出す。
+
+    署名 NG / 期限切れは例外。
+    """
     return jwt.decode(token, settings.jwt_secret, algorithms=[ALGORITHM])
 
 

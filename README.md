@@ -31,7 +31,7 @@ bun run dev
 - [x] phase 1: プロジェクト初期化（`docs/phase-1.md`）
 - [x] phase 2: DB + 認証（`docs/phase-2.md`）
 - [x] phase 3: 校正 API（`docs/phase-3.md`）
-- [ ] phase 4: フロント
+- [x] phase 4: フロント（`docs/phase-4.md`）
 - [ ] phase 5: 管理者機能
 
 ## 開発フロー

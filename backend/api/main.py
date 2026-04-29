@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 from fastapi import Depends, FastAPI, HTTPException, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from api.ai import Corrector, get_corrector
 from api.auth import (
     COOKIE_NAME,
     authenticate,
@@ -13,7 +14,7 @@ from api.auth import (
 from api.db import SessionLocal, engine, get_session
 from api.initial_admin import ensure_initial_admin
 from api.models import Base, User
-from api.schemas import LoginIn, UserOut
+from api.schemas import CorrectIn, CorrectOut, LoginIn, UserOut
 
 
 # === 起動時セットアップ ===
@@ -76,3 +77,16 @@ async def logout(response: Response) -> dict[str, str]:
 async def me(user: User = Depends(current_user)) -> User:
     """認証必須の疎通確認用：current_user を通って現在のログインユーザー情報を返す。"""
     return user
+
+
+# === 校正エンドポイント ===
+
+
+@app.post("/api/correct", response_model=CorrectOut)
+async def correct(
+    body: CorrectIn,
+    user: User = Depends(current_user),
+    corrector: Corrector = Depends(get_corrector),
+) -> CorrectOut:
+    """校正リクエスト時：認証済みユーザーのテキストを Gemini で校正して返す。永続化しない。"""
+    return await corrector(body.original)

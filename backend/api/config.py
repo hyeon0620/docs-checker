@@ -11,6 +11,8 @@ class Settings(BaseSettings):
     jwt_expire_hours: int = 24
     initial_admin_username: str = "admin"
     initial_admin_password: str = ""
+    google_api_key: str = ""
+    gemini_model: str = "gemini-2.5-flash-lite"
 
 
 settings = Settings()

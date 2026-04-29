@@ -385,7 +385,7 @@ JWTはクライアント側で状態を管理する。
 ```
 # AI
 
-GEMINI_API_KEY=...
+GOOGLE_API_KEY=...   # langchain-google-genai が自動で読む
 GEMINI_MODEL=gemini-2.5-flash-lite
 
 # DB
